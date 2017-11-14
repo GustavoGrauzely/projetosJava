@@ -36,7 +36,6 @@ INDEX VERSION 1.127+C:\Users\g.da.silva.alves\workspace\.metadata\.plugins\org.e
 2061020461.index
 3819729577.index
 1406367365.index
-3367139844.index
 1822656655.index
 2111740084.index
 2157921699.index
