@@ -1,0 +1,1286 @@
+package br.com.patchexpress.util;
+
+import java.io.BufferedInputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Stack;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import br.com.patchexpress.domain.log;
+
+public class Util {
+
+	private log logNome;
+	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+	public void logAtual(File file) {
+		this.setLogNome(new log());
+		if (file.isDirectory()) {
+			this.getLogNome().setLogDescricao(
+					dateFormat.format(new Date()) + ": Pasta '" + file
+							+ "' criada...");
+		} else {
+			this.getLogNome().setLogDescricao(
+					dateFormat.format(new Date()) + ": Arquivo '" + file
+							+ "' criado...");
+		}
+	}
+
+	public void criarDiretorioPasta(File dirDestino, File dirRaiz,
+			List<log> logs) throws IOException, ParserConfigurationException,
+			SAXException {
+		// cria pasta destino
+		dirDestino.mkdir();
+		// inicio log
+		this.logAtual(dirDestino);
+		logs.add(this.getLogNome());
+		// fim log
+		File backup = new File(dirDestino, "backup");
+		backup.mkdirs();
+		// inicio log
+		this.logAtual(backup);
+		logs.add(this.getLogNome());
+		// fim log
+		// verificar se tem doc no patch origem
+		File[] listarPastas = dirRaiz.listFiles(new FileFilter() {
+			public boolean accept(File nomeDoc) {
+				return nomeDoc.getName().equalsIgnoreCase("doc");
+			}
+		});
+		if (listarPastas.length != 0) {
+			String nomeArqDoc = listarPastas[0].getName();
+			String caminhoRaiz = dirRaiz + "\\" + nomeArqDoc;
+			File dirRaizDoc = new File(caminhoRaiz);
+			File doc = new File(dirDestino, nomeArqDoc);
+			doc.mkdirs();
+			copiarPastasArquivos(dirRaizDoc, doc, logs);
+			// inicio log
+			this.logAtual(doc);
+			logs.add(this.getLogNome());
+			// fim log
+		}
+
+		File explainPlan = new File(dirDestino, "Explain Plan");
+		explainPlan.mkdirs();
+		// inicio log
+		this.logAtual(explainPlan);
+		logs.add(this.getLogNome());
+		// fim log
+
+		File xgeq = new File(dirDestino, "xgeq");
+		xgeq.mkdirs();
+		// inicio log
+		this.logAtual(xgeq);
+		logs.add(this.getLogNome());
+		// fim log
+		copiarArquivosExt(dirRaiz, xgeq, logs);
+
+		// gerar o driver
+		CriarDriver(dirDestino, dirRaiz, logs);
+	}
+
+	public static String verificarXml(String xml)
+			throws ParserConfigurationException, SAXException, IOException {
+		try{
+			File fXmlFile = new File(xml);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+			doc.getDocumentElement().normalize();
+			return doc.getDocumentElement().getNodeName();
+		}catch{
+			throw new IOException(e.getMessage());
+		}
+	}
+
+	public void copiarArquivosExt(File origem, File destino, List<log> logs)
+			throws IOException, ParserConfigurationException, SAXException {
+		File[] arqOrigem = origem.listFiles();
+		for (File arq : arqOrigem) {
+			if (arq.isDirectory()) {
+				copiarArquivosExt(arq, destino, logs);
+			} else {
+				if (arq.getName().toLowerCase().endsWith(".xml")
+						&& verificarXml(arq.toString())
+								.equalsIgnoreCase("page")) {
+					// .xml xgeq\mds
+					File mds = new File(destino, "mds");
+					if (!mds.isDirectory()) {
+						mds.mkdirs();
+						// inicio log
+						this.logAtual(mds);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File xml = new File(mds + "\\" + arq.getName());
+					copiarArquivos(arq, xml);
+					// inicio log
+					this.logAtual(xml);
+					logs.add(this.getLogNome());
+					// fim log
+				}
+				if (arq.getName().toLowerCase().endsWith(".fmb")) {
+					// .fmb xgeq\forms
+					File forms = new File(destino, "forms");
+					if (!forms.isDirectory()) {
+						forms.mkdirs();
+						// inicio log
+						this.logAtual(forms);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File PTB = new File(forms, "PTB");
+					if (!PTB.isDirectory()) {
+						PTB.mkdirs();
+						// inicio log
+						this.logAtual(PTB);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File fmb = new File(PTB + "\\" + arq.getName());
+					copiarArquivos(arq, fmb);
+					// inicio log
+					this.logAtual(fmb);
+					logs.add(this.getLogNome());
+					// fim log
+					File US = new File(forms, "US");
+					if (!US.isDirectory()) {
+						US.mkdirs();
+						// inicio log
+						this.logAtual(US);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File fmb2 = new File(US + "\\" + arq.getName());
+					copiarArquivos(arq, fmb2);
+					// inicio log
+					this.logAtual(fmb2);
+					logs.add(this.getLogNome());
+					// fim log
+				}
+				if (arq.getName().toLowerCase().endsWith(".rdf")) {
+					// .rdf xgeq\reports
+					File reports = new File(destino, "reports");
+					if (!reports.isDirectory()) {
+						reports.mkdirs();
+						// inicio log
+						this.logAtual(reports);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File rdf = new File(reports + "\\" + arq.getName());
+					copiarArquivos(arq, rdf);
+					// inicio log
+					this.logAtual(rdf);
+					logs.add(this.getLogNome());
+					// fim log
+				}
+				if (arq.getName().toLowerCase().endsWith(".drv")) {
+					// .drv xgeq\admin\driver
+					File admin = new File(destino, "admin");
+					if (!admin.isDirectory()) {
+						admin.mkdirs();
+						// inicio log
+						this.logAtual(admin);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File driver = new File(admin, "driver");
+					if (!driver.isDirectory()) {
+						driver.mkdirs();
+						// inicio log
+						this.logAtual(driver);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File drv = new File(driver + "\\" + arq.getName());
+					copiarArquivos(arq, drv);
+					// inicio log
+					this.logAtual(drv);
+					logs.add(this.getLogNome());
+					// fim log
+				}
+				if (arq.getName().toLowerCase().endsWith(".ldt")) {
+					// .ldt xgeq\admin\import
+					File admin = new File(destino, "admin");
+					if (!admin.isDirectory()) {
+						admin.mkdirs();
+						// inicio log
+						this.logAtual(admin);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File importar = new File(admin, "import");
+					if (!importar.isDirectory()) {
+						importar.mkdirs();
+						// inicio log
+						this.logAtual(importar);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File ldt = new File(importar + "\\" + arq.getName());
+					copiarArquivos(arq, ldt);
+					// inicio log
+					this.logAtual(ldt);
+					logs.add(this.getLogNome());
+					// fim log
+				}
+				if (arq.getName().toLowerCase().endsWith(".pls")
+						|| arq.getName().toLowerCase().endsWith(".vw")) {
+					// .pls xgeq\admin\sql
+					File admin = new File(destino, "admin");
+					if (!admin.isDirectory()) {
+						admin.mkdirs();
+						// inicio log
+						this.logAtual(admin);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File sql = new File(admin, "sql");
+					if (!sql.isDirectory()) {
+						sql.mkdirs();
+						// inicio log
+						this.logAtual(sql);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File pls = new File(sql + "\\" + arq.getName());
+					copiarArquivos(arq, pls);
+					// inicio log
+					this.logAtual(pls);
+					logs.add(this.getLogNome());
+					// fim log
+				}
+				if (arq.getName().toLowerCase().endsWith(".rtf")) {
+					// .rtf xgeq\patch\115\publisher\templates
+					File patch = new File(destino, "patch");
+					if (!patch.isDirectory()) {
+						patch.mkdirs();
+						// inicio log
+						this.logAtual(patch);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File p115 = new File(patch, "115");
+					if (!p115.isDirectory()) {
+						p115.mkdirs();
+						// inicio log
+						this.logAtual(p115);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File publisher = new File(p115, "publisher");
+					if (!publisher.isDirectory()) {
+						publisher.mkdirs();
+						// inicio log
+						this.logAtual(publisher);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File templates = new File(publisher, "templates");
+					if (!templates.isDirectory()) {
+						templates.mkdirs();
+						// inicio log
+						this.logAtual(templates);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File rtf = new File(templates + "\\" + arq.getName());
+					copiarArquivos(arq, rtf);
+					// inicio log
+					this.logAtual(rtf);
+					logs.add(this.getLogNome());
+					// fim log
+				}
+				if (arq.getName().toLowerCase().endsWith(".xml")
+						&& !verificarXml(arq.toString()).equalsIgnoreCase(
+								"page")) {
+					// .xml xgeq\patch\115\publisher\defs
+					File patch = new File(destino, "patch");
+					if (!patch.isDirectory()) {
+						patch.mkdirs();
+						// inicio log
+						this.logAtual(patch);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File p115 = new File(patch, "115");
+					if (!p115.isDirectory()) {
+						p115.mkdirs();
+						// inicio log
+						this.logAtual(p115);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File publisher = new File(p115, "publisher");
+					if (!publisher.isDirectory()) {
+						publisher.mkdirs();
+						// inicio log
+						this.logAtual(publisher);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File defs = new File(publisher, "defs");
+					if (!defs.isDirectory()) {
+						defs.mkdirs();
+						// inicio log
+						this.logAtual(defs);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File xml = new File(defs + "\\" + arq.getName());
+					copiarArquivos(arq, xml);
+					// inicio log
+					this.logAtual(xml);
+					logs.add(this.getLogNome());
+					// fim log
+				}
+				if (arq.getName().toLowerCase().endsWith(".grt")
+						|| arq.getName().toLowerCase().endsWith(".syn")
+						|| arq.getName().toLowerCase().endsWith(".tab")
+						|| arq.getName().toLowerCase().endsWith(".seq")
+						|| arq.getName().toLowerCase().endsWith(".sql")) {
+					// .grt, .syn , .tab, .vw , .sql xgeq\patch\115\sql
+					File patch = new File(destino, "patch");
+					if (!patch.isDirectory()) {
+						patch.mkdirs();
+						// inicio log
+						this.logAtual(patch);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File p115 = new File(patch, "115");
+					if (!p115.isDirectory()) {
+						p115.mkdirs();
+						// inicio log
+						this.logAtual(p115);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File sql115 = new File(p115, "sql");
+					if (!sql115.isDirectory()) {
+						sql115.mkdirs();
+						// inicio log
+						this.logAtual(sql115);
+						logs.add(this.getLogNome());
+						// fim log
+					}
+					File grt = new File(sql115 + "\\" + arq.getName());
+					copiarArquivos(arq, grt);
+					// inicio log
+					this.logAtual(grt);
+					logs.add(this.getLogNome());
+					// fim log
+				}
+			}
+		}
+	}
+
+	// método para compactar arquivo
+	static final int TAMANHO_BUFFER = 4096; // 4kb
+
+	public static void compactarArquivoParaZip(String arqEntrada,
+			String arqSaida) throws IOException {
+		int cont;
+		byte[] dados = new byte[TAMANHO_BUFFER];
+
+		BufferedInputStream origem = null;
+		FileInputStream streamDeEntrada = null;
+		FileOutputStream destino = null;
+		ZipOutputStream saida = null;
+		ZipEntry entry = null;
+		// String texto = "Um texto qualquer vindo de algum lugar!" ;
+		try {
+			destino = new FileOutputStream(new File(arqSaida));
+			saida = new ZipOutputStream(new BufferedOutputStream(destino));
+			File file = new File(arqEntrada);
+			streamDeEntrada = new FileInputStream(file);
+			origem = new BufferedInputStream(streamDeEntrada, TAMANHO_BUFFER);
+			entry = new ZipEntry(file.getName());
+			saida.putNextEntry(entry);
+
+			while ((cont = origem.read(dados, 0, TAMANHO_BUFFER)) != -1) {
+				saida.write(dados, 0, cont);
+			}
+			// saida.write(dados,1,cont);
+			// saida.write(texto.getBytes(),1, cont);
+			origem.close();
+			saida.close();
+		} catch (IOException e) {
+			throw new IOException(e.getMessage());
+		}
+	}
+
+	public static void compactarPastaeArquivoParaZip(File inFolder,
+			File outFolder) throws IOException {
+		try {
+
+			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
+					new FileOutputStream(outFolder)));
+			BufferedInputStream in = null;
+			byte[] data = new byte[1000];
+			String files[] = inFolder.list();
+			for (int i = 0; i < files.length; i++) {
+				in = new BufferedInputStream(new FileInputStream(
+						inFolder.getPath() + " " + files[i]), 1000);
+				out.putNextEntry(new ZipEntry(files[i]));
+				int count;
+				while ((count = in.read(data, 0, 1000)) != -1) {
+					out.write(data, 0, count);
+				}
+				out.closeEntry();
+			}
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	
+	// como compactar uma pasta inteira;
+
+	// public void compactarPastaInteira(){
+	// try {
+	// FileOutputStream fos = new FileOutputStream("C:\\teste\\pasta.zip");
+	//
+	// ZipOutputStream zipOut = new ZipOutputStream( fos );
+	//
+	// File pasta = new File("C:\\teste\\pasta");
+	// for(File arq : pasta.listFiles() ){
+	// zipOut.putNextEntry( new ZipEntry( arq.getName().toString() ) );
+	//
+	// FileInputStream fis = new FileInputStream( arq );
+	//
+	// int content;
+	// while ((content = fis.read()) != -1) {
+	// zipOut.write( content );
+	// }
+	//
+	// zipOut.closeEntry();
+	//
+	// }
+	//
+	// zipOut.close();
+	//
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
+
+	public void localizarArquivos() {
+
+		String linha = "&ieGraficaFabricante=647250523112&ieContribuinte%260060785118&";
+		String saida2 = linha.replaceAll("85118", "Troca");
+		final int tamanhoCodigo = 12;
+		String s = "%ieContribuinte";
+		int pos = linha.indexOf(s) + 1;
+		String saida = linha.substring(pos + s.length(), pos + s.length()
+				+ tamanhoCodigo);
+
+		System.out.println(saida);
+		System.out.println(saida2);
+	}
+
+	public void novoLerArquivos(InputStream is, OutputStream os)
+			throws IOException {
+
+		try {
+
+			OutputStreamWriter osw = new OutputStreamWriter(os);
+			BufferedWriter bw = new BufferedWriter(osw);
+			Scanner entrada = new Scanner(is);
+
+			while (entrada.hasNextLine()) {
+				String linha = entrada.nextLine();
+				String newlinha = linha.substring(0, 6);
+				bw.write(newlinha + ",");
+				newlinha = linha.substring(2, 5);
+				bw.write(newlinha + ",");
+				// newlinha = linha.substring(3, 0);
+				// bw.write(newlinha + ",");
+				bw.newLine();
+			}
+			bw.close();
+
+			entrada.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	// o ler um arquivo compactado
+	public void lerArquivos(InputStream is, OutputStream os) {
+
+		// try {File arquivo,
+		// if (!arquivo.exists()) {
+		// //cria um arquivo (vazio)
+		// arquivo.createNewFile();
+		// }
+
+		// String newLine = System.getProperty("line.separator");
+		// caso seja um diretório, é possível listar seus arquivos e diretórios
+		// File[] arquivos = arquivo.listFiles();
+		// escreve no arquivo
+
+		// bw.write(" ");
+		// bw.newLine();
+		// faz a leitura do arquivo
+
+		// FileReader fr = new FileReader(arquivo);
+		// BufferedReader br = new BufferedReader(fr);
+
+		// String linha;
+		// while ((linha = br.readLine()) != null) {
+		// //String texto = br.readLine();
+		// if (linha.contains("SPCE043_001")) {
+		// linha = linha.replace("SPCE043_001", "SIDINELSON");
+		// }
+		//
+		// bw.write(linha);
+		//
+		// }
+		//
+		// System.out.println(linha);
+
+		OutputStreamWriter osw = new OutputStreamWriter(os);
+		BufferedWriter bw = new BufferedWriter(osw);
+		Scanner entrada = new Scanner(is);
+		while (entrada.hasNextLine()) {
+			String linha = entrada.nextLine();
+
+			if (linha.contains("SPCE043_001")) {
+				linha = linha.replace("SPCE043_001", "SIDINELSON");
+
+			}
+
+			try {
+				bw.write(linha);
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			bw.close();
+			entrada.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// arquivo.delete();
+		// nf.renameTo(arquivo);
+		// enquanto houver mais linhas
+		// while (br.ready()) {
+		// //lê a proxima linha
+		// String linha = br.readLine();
+		// //faz algo com a linha
+		// //String substLina = linha.replaceAll("TESTE SIDICLEY BARTOLOMEU",
+		// "BARTOLOMEU PEREIRA DE LIMA");
+		// //linha.replaceAll("BARTOLOMEU", "BARTOLOMEU PEREIRA DE LIMA");
+		//
+		// linha = linha.replace(linha.substring(84,94), "SIDINELSON");
+		// //'bw.write(linha);
+		// System.out.println(linha);
+
+		// linha2 = br.readLine();
+
+		// String linha5 =
+		// "SELECT patch_name,creation_date FROM ad_applied_patches WHERE PATCH_NAME like %"+
+		// linha1 +"%' 2  ORDER BY 1";
+		// bw.write(substLina);
+		// substLina = br.readLine();
+		// System.out.println(substLina);
+		// bw.newLine();
+		// bw.write("Texto a ser escrito no txt"+newLine);
+		// String linha3 = br.readLine();
+		// System.out.println(linha3);
+		// }
+
+		// bw.close();
+		// fw.close();
+		// br.close();
+		// fr.close();
+		// } catch (IOException ex) {
+		// ex.printStackTrace();
+		// }
+	}
+
+	public File[] visualizarArquivos(File diretorio) throws IOException {
+		File afile[] = diretorio.listFiles();
+		return afile;
+	}
+
+	public void copyDirectory(File srcDir, File dstDir) throws IOException {
+
+		if (srcDir.isDirectory()) {
+			if (!dstDir.exists()) {
+				dstDir.mkdir();
+			}
+			String[] children = srcDir.list();
+			for (int i = 0; i < children.length; i++) {
+				copyDirectory(new File(srcDir, children[i]), new File(dstDir,
+						children[i]));
+			}
+		} else {
+			copyArquivo(srcDir, dstDir);
+		}
+	}
+
+	// Copiar o Arquivo
+	public void copyArquivo(File src, File dst) throws IOException {
+
+		InputStream in = new FileInputStream(src);
+		OutputStream out = new FileOutputStream(dst);
+		byte[] buf = new byte[1024];
+		int len;
+		while ((len = in.read(buf)) > 0) {
+			out.write(buf, 0, len);
+		}
+		in.close();
+		out.close();
+	}
+
+	public static void copiarArquivos(File origem, File destino)
+			throws IOException {
+		FileInputStream fisOrigem = new FileInputStream(origem);
+		FileOutputStream fisDestino = new FileOutputStream(destino);
+		FileChannel fcOrigem = fisOrigem.getChannel();
+		FileChannel fcDestino = fisDestino.getChannel();
+		fcOrigem.transferTo(0, fcOrigem.size(), fcDestino);
+		fisOrigem.close();
+		fisDestino.close();
+	}
+
+	public void copiarPastasArquivos(File origem, File destino, List<log> logs)
+			throws IOException {
+		File[] arqOrigem = origem.listFiles();
+		for (File arq : arqOrigem) {
+			if (arq.isDirectory()) {
+				File subArq = new File(destino + "\\" + arq.getName());
+				subArq.mkdir();
+				copiarPastasArquivos(arq, subArq, logs);
+				// inicio log
+				this.logAtual(subArq);
+				logs.add(this.getLogNome());
+				// fim log
+			} else {
+				copiarArquivos(arq, new File(destino + "\\" + arq.getName()));
+				// inicio log
+				this.logAtual(new File(destino + "\\" + arq.getName()));
+				logs.add(this.getLogNome());
+				// fim log
+			}
+		}
+	}
+
+	public void criarPastaArquivo(File pasta, String arquivo,
+			String nomeArqRaiz, List<log> logs) throws IOException {
+		pasta.mkdir();
+		// inicio log
+		this.logAtual(pasta);
+		logs.add(this.getLogNome());
+		// fim log
+		File arquivoNaPasta = new File(pasta + "\\" + arquivo);
+		arquivoNaPasta.createNewFile();
+		// inicio log
+		this.logAtual(arquivoNaPasta);
+		logs.add(this.getLogNome());
+		// fim log
+		// escrever SQL no arquivo
+		String[] separado = nomeArqRaiz.split("_");
+		String parametroArq = separado[1] + "_" + separado[separado.length - 1];
+		BufferedWriter writer = new BufferedWriter(new FileWriter(
+				arquivoNaPasta));
+		writer.write("SQL> SELECT patch_name,creation_date FROM ad_applied_patches WHERE PATCH_NAME like '%121"
+				+ parametroArq + "%'");
+		writer.newLine();
+		writer.write("2  ORDER BY 1;");
+		writer.newLine();
+		writer.write("PATCH_NAME           CREATION_DATE");
+		writer.newLine();
+		writer.write("==================== ===============");
+		writer.newLine();
+		writer.newLine();
+		writer.write("SQL> spool off");
+		// Criando o conteúdo do arquivo
+		writer.flush();
+		// Fechando conexão e escrita do arquivo.
+		writer.close();
+	}
+
+	public void zip(File[] files, File outputFile) throws IOException {
+
+		if (files != null && files.length > 0) {
+			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
+					outputFile));
+			Stack<File> parentDirs = new Stack<File>();
+			zipFiles(parentDirs, files, out);
+			out.close();
+		}
+	}
+
+	private void zipFiles(Stack<File> parentDirs, File[] files,
+			ZipOutputStream out) throws IOException {
+		byte[] buf = new byte[1024];
+
+		for (int i = 0; i < files.length; i++) {
+			if (files[i].isDirectory()) {
+				// se a entrad é um diretório, empilha o diretório e
+				// chama o mesmo método recursivamente
+				parentDirs.push(files[i]);
+				zipFiles(parentDirs, files[i].listFiles(), out);
+
+				// após processar as entradas do diretório, desempilha
+				parentDirs.pop();
+			} else {
+				FileInputStream in = new FileInputStream(files[i]);
+
+				// itera sobre os itens da pilha para montar o caminho
+				// completo do arquivo
+				String path = "";
+				for (File parentDir : parentDirs) {
+					path += parentDir.getName() + "/";
+				}
+
+				// grava os dados no arquivo zip
+				out.putNextEntry(new ZipEntry(path + files[i].getName()));
+
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+
+				out.closeEntry();
+				in.close();
+			}
+		}
+	}
+
+	public void unzip(File zipFile, File dir) throws IOException {
+		ZipFile zip = null;
+		File arquivo = null;
+		InputStream is = null;
+		OutputStream os = null;
+		byte[] buffer = new byte[1024];
+
+		try {
+			// cria diretório informado, caso não exista
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			if (!dir.exists() || !dir.isDirectory()) {
+				throw new IOException("O diretório " + dir.getName()
+						+ " não é um diretório válido");
+			}
+
+			zip = new ZipFile(zipFile);
+			Enumeration<?> e = zip.entries();
+			while (e.hasMoreElements()) {
+				ZipEntry entrada = (ZipEntry) e.nextElement();
+				arquivo = new File(dir, entrada.getName());
+
+				// se for diretório inexistente, cria a estrutura e pula
+				// pra próxima entrada
+				if (entrada.isDirectory() && !arquivo.exists()) {
+					arquivo.mkdirs();
+					continue;
+				}
+
+				// se a estrutura de diretórios não existe, cria
+				if (!arquivo.getParentFile().exists()) {
+					arquivo.getParentFile().mkdirs();
+				}
+				try {
+					// lê o arquivo do zip e grava em disco
+					is = zip.getInputStream(entrada);
+					os = new FileOutputStream(arquivo);
+					int bytesLidos = 0;
+					if (is == null) {
+						throw new ZipException("Erro ao ler a entrada do zip: "
+								+ entrada.getName());
+					}
+					while ((bytesLidos = is.read(buffer)) > 0) {
+						os.write(buffer, 0, bytesLidos);
+					}
+				} finally {
+					if (is != null) {
+						try {
+							is.close();
+						} catch (Exception ex) {
+						}
+					}
+					if (os != null) {
+						try {
+							os.close();
+						} catch (Exception ex) {
+						}
+					}
+				}
+			}
+		} finally {
+			if (zip != null) {
+				try {
+					zip.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
+
+	public log getLogNome() {
+		return logNome;
+	}
+
+	public void setLogNome(log logNome) {
+		this.logNome = logNome;
+	}
+	
+	public String retornaVersao(String caminho) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(caminho));
+		String versao = "";
+		while(br.ready()){ 
+			String linha = br.readLine();
+			if(linha.contains("$Header")){
+				String[] header = linha.split(" ");
+				for (int i = 0; i < header.length; i++) {
+					if (header[i].contains("120")) {
+						versao = header[i];
+					}
+				}
+				break;
+			} 
+		}
+		br.close();
+		return versao;
+	}
+	
+	public String retornaLCT(String caminho) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(caminho));
+		String lct = "";
+		while(br.ready()){ 
+			String linha = br.readLine();
+			if(linha.contains("LDRCONFIG")){
+				String[] LDRCONFIG = linha.split("\"");
+				String[] LCT1 = LDRCONFIG[1].split(" ");
+				lct = LCT1[0]; 
+			}
+	 	}
+		br.close();
+		return lct;
+		}
+	
+	public String retornaTemplate(String caminho) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(caminho));
+		String nameTempalte = "";
+		while(br.ready()){ 
+			String linha = br.readLine();
+			if(linha.contains("<dataTemplate")){
+				String[] separar = linha.split("\"");
+				nameTempalte = separar[1];
+			}		
+		
+	 	}
+		br.close();
+		return nameTempalte;
+	
+
+	}
+
+	public void CriarDriver(File dirRaiz, File dirOrigem, List<log> logs) {
+
+		try {
+
+			String patchRaiz = dirRaiz.getName();
+			String[] separado = patchRaiz.split("_");
+			String nomePatch = separado[1] + "_"
+					+ separado[separado.length - 1];
+			String versaoS = separado[separado.length - 1];
+			int versao = Integer.parseInt(versaoS);
+			File arquivoDriver = new File(dirRaiz + "\\u121" + nomePatch
+					+ ".drv");
+			arquivoDriver.createNewFile();
+			BufferedWriter writer = new BufferedWriter(new FileWriter(
+					arquivoDriver));
+			Date dataHoraAtual = new Date();
+			String data = new SimpleDateFormat("dd/MM/yyyy")
+					.format(dataHoraAtual);
+			String hora = new SimpleDateFormat("HH:mm:ss")
+					.format(dataHoraAtual);
+
+			writer.write("# $Header: u121" + nomePatch + ".drv 120." + versao
+					+ " " + data + " " + hora + " appldev ship $");
+			writer.newLine();
+			writer.newLine();
+			writer.write("begin aru u121" + nomePatch);
+			writer.newLine();
+			writer.newLine();
+			writer.write("  compatible release 12.0.0");
+			writer.newLine();
+			writer.write("  compatible parallel no");
+			writer.newLine();
+			writer.write("  compatible platform GENERIC");
+			writer.newLine();
+			writer.write("  characterset AL32UTF8");
+			writer.newLine();
+			writer.write("  extension recordpatch 999990031065029 US");
+			writer.newLine();
+			writer.write("  extension patch_type software base");
+			writer.newLine();
+			writer.write("  extension trackable_entity xgeq product GEQ Customizacoes");
+			writer.newLine();
+			writer.write("  extension fixes u121" + nomePatch + " xgeq R12");
+			writer.newLine();
+			writer.write("  extension based on xgeq A");
+			writer.newLine();
+			writer.write("  extension level xgeq A.1");
+			writer.newLine();
+			writer.write("  compatible feature checkfile");
+			writer.newLine();
+			writer.newLine();
+			writer.write("  begin bug xgeq u121" + nomePatch);
+			writer.newLine();
+			writer.newLine();
+			writer.write("    begin actions");
+			writer.newLine();
+			writer.newLine();
+		
+			try {
+			File import_xgeq = new File(dirRaiz + "\\xgeq\\admin\\import");
+			if (import_xgeq.isDirectory()) {
+				File afile[] = visualizarArquivos(import_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+						writer.write("        forcecopy xgeq admin/import "+ arquivos.getName()+" "+retornaVersao(arquivos.toString()));
+						writer.newLine();
+					}
+				}
+	     	} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+		
+			try {
+				File defs_xgeq = new File(dirRaiz + "\\xgeq\\patch\\115\\publisher\\defs");
+				if(defs_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(defs_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        forcecopy xgeq patch/115/publisher/defs "+ arquivos.getName()+" "+retornaVersao(arquivos.toString()));
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File templates_xgeq = new File(dirRaiz + "\\xgeq\\patch\\115\\publisher\\templates");
+				if(templates_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(templates_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        forcecopy xgeq patch/115/publisher/templates "+ arquivos.getName()+" 120."+versao);
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File sql_xgeq = new File(dirRaiz + "\\xgeq\\admin\\sql");
+				if(sql_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(sql_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        forcecopy xgeq admin/sql "+ arquivos.getName()+" "+retornaVersao(arquivos.toString()));
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File sql115_xgeq = new File(dirRaiz + "\\xgeq\\patch\\115\\sql");
+				if(sql115_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(sql115_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        forcecopy xgeq patch/115/sql "+ arquivos.getName()+" "+retornaVersao(arquivos.toString()));
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File driver_xgeq = new File(dirRaiz + "\\xgeq\\admin\\driver");
+				if(driver_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(driver_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        copy xgeq admin/driver "+ arquivos.getName()+" "+retornaVersao(arquivos.toString()));
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File PTB_xgeq = new File(dirRaiz + "\\xgeq\\forms\\PTB");
+				if(PTB_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(PTB_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        forcecopy xgeq forms/PTB "+ arquivos.getName()+" "+retornaVersao(arquivos.toString()));
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File US_xgeq = new File(dirRaiz + "\\xgeq\\forms\\US");
+				if(US_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(US_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        forcecopy xgeq forms/US "+ arquivos.getName()+" "+retornaVersao(arquivos.toString()));
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				if(dirOrigem.isDirectory()){
+				File afile[] = visualizarArquivos(dirOrigem);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					if(arquivos.getName().endsWith(".zip")){
+						writer.write("        jcopy "+ arquivos.getName());
+						writer.newLine();
+						}
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File mds_xgeq = new File(dirRaiz + "\\xgeq\\mds");
+				if(mds_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(mds_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        forcecopy xgeq mds "+ arquivos.getName());
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+
+			int Contador = 0;
+			try {
+				File sql_exe_xgeq = new File(dirRaiz + "\\xgeq\\patch\\115\\sql");
+				if(sql_exe_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(sql_exe_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					Contador=Contador+1;
+					writer.write("        sql xgeq patch/115/sql "+ arquivos.getName()+"none none none sqlplus &phase=os+"+Contador+" &un_xgeq &pw_xgeq &index_tspace");
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File sql_adm_xgeq = new File(dirRaiz + "\\xgeq\\admin\\sql");
+				if(sql_adm_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(sql_adm_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					Contador=Contador+1;
+					writer.write("        sql xgeq admin/sql "+ arquivos.getName()+"none none none package &phase=os+"+Contador+" &un_xgeq &pw_xgeq");
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File FNDLOAD_xgeq = new File(dirRaiz + "\\xgeq\\admin\\import");
+				if(FNDLOAD_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(FNDLOAD_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					Contador=Contador+1;
+					writer.write("        exec fnd bin FNDLOAD bin &phase=os+"+Contador+" ui_apps 0 Y UPLOAD @FND:patch/115/import/"+retornaLCT(arquivos.toString())+" @XGEQ:admin/import/"+arquivos.getName()+" - CUSTOM_MODE=FORCE WARNINGS=TRUE");
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File DATA_TEMPLATE_xgeq = new File(dirRaiz + "\\xgeq\\patch\\115\\publisher\\defs");
+				if(DATA_TEMPLATE_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(DATA_TEMPLATE_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					Contador=Contador+1;
+					writer.write("        exec java oracle/apps/xdo/oa/util XDOLoader.class java &phase=os+"+Contador+" UPLOAD -DB_USERNAME &un_apps -DB_PASSWORD &pw_apps -JDBC_CONNECTION &jdbc_db_addr -LOB_TYPE \"DATA_TEMPLATE\" -APPS_SHORT_NAME \"XGEQ\" -LOB_CODE \""+retornaTemplate(arquivos.toString())+"\" -LANGUAGE \"pt\" -TERRITORY \"00\" -XDO_FILE_TYPE \"XML-DATA-TEMPLATE\" -CUSTOM_MODE \"FORCE\" -FILE_NAME &fullpath:xgeq:patch/115/publisher/defs:"+arquivos.getName());
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File TEMPLATE_xgeq = new File(dirRaiz + "\\xgeq\\patch\\115\\publisher\\templates");
+				if(TEMPLATE_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(TEMPLATE_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					Contador=Contador+1;
+					writer.write("        exec java oracle/apps/xdo/oa/util XDOLoader.class java &phase=os+"+Contador+" UPLOAD -DB_USERNAME &un_apps -DB_PASSWORD &pw_apps -JDBC_CONNECTION &jdbc_db_addr -LOB_TYPE \"TEMPLATE\" -APPS_SHORT_NAME \"XGEQ\" -LOB_CODE \""+arquivos.getName().substring(0, arquivos.getName().length() - 4)+"\" -LANGUAGE \"pt\" -TERRITORY \"00\" -XDO_FILE_TYPE \"RTF\" -CUSTOM_MODE \"FORCE\" -FILE_NAME &fullpath:xgeq:patch/115/publisher/templates:"+arquivos.getName());
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File mds_xml_xgeq = new File(dirRaiz + "\\xgeq\\mds");
+				if(mds_xml_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(mds_xml_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					Contador=Contador+1;
+					writer.write("        exec java oracle/jrad/tools/xml/importer XMLImporter.class java &phase=dat+"+Contador+" checkfile:xgeq:mds:"+arquivos.getName()+" &fullpath:xgeq:mds:"+arquivos.getName()+" -username &un_apps -password &pw_apps -dbconnection &jdbc_db_addr -userId \"1\" -rootPackage /geq/oracle/apps/po/webui -rootdir &fullpath_xgeq_mds_directory");
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File forms_PTB_xgeq = new File(dirRaiz + "\\xgeq\\forms\\PTB");
+				if(forms_PTB_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(forms_PTB_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        genform xgeq forms/PTB "+arquivos.getName());
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			
+			try {
+				File forms_US_xgeq = new File(dirRaiz + "\\xgeq\\forms\\US");
+				if(forms_US_xgeq.isDirectory()){
+				File afile[] = visualizarArquivos(forms_US_xgeq);
+				for (int i = 0; i < afile.length; i++) {
+					File arquivos = afile[i];
+					writer.write("        genform xgeq forms/US "+arquivos.getName());
+					writer.newLine();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			writer.newLine();
+			writer.write("        sql ad sql adutlrcmp.sql none none none sqlplus &phase=last APPLSYS &pw_apps APPS &pw_apps &systempwd 1  0 NONE FALSE");
+			writer.newLine();
+			writer.newLine();
+			writer.write("    end actions");
+			writer.newLine();
+			writer.newLine();
+			writer.write("  end bug xgeq u121" + nomePatch);
+			writer.newLine();
+			writer.newLine();
+			writer.write("end aru u121" + nomePatch);
+			// Criando o conteúdo do arquivo
+			writer.flush();
+			// Fechando conexão e escrita do arquivo.
+			writer.close();
+			// inicio log
+			this.logAtual(arquivoDriver);
+			logs.add(this.getLogNome());
+			// fim log
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+
+}

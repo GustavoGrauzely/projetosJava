@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+	<title>Patch Express</title>
+</h:head>
+<h:body>
+	<h:form id="mainForm">
+		<p:growl life="3000" id="growl" sticky="true" />
+		<p:panel style="text-align: center">
+
+			<p:graphicImage url="./img/acc.png" width="300px" height="150px" />
+			<div align="center">
+
+				<H4>Digite o caminho das pastas em seus respectivos campos:</H4>
+
+				<h:panelGrid >
+					<p:column >
+						<h:outputLabel for="input_origem">
+							<b>Origem</b> (Ex.:C:\Origem\...)</h:outputLabel>
+						<br />
+						<p:inputText required="true"
+							requiredMessage="Atenção! Preencha o campo origem"
+							id="input_origem" disabled="#{IndexManagerBean.origemOk == true}"
+							value="#{IndexManagerBean.origem}" style="width: 500px"></p:inputText>
+						<p:graphicImage rendered="#{IndexManagerBean.origemOk == true}"
+							url="./img/ok.png" />
+					</p:column>
+					<p:column >
+						<h:outputLabel for="input_destino">
+							<b>Destino</b> (Ex.:C:\Destino\...)</h:outputLabel>
+						<br />
+						<p:inputText required="true"
+							requiredMessage="Atenção! Preencha o campo destino"
+							id="input_destino"
+							disabled="#{IndexManagerBean.destinoOk == true}"
+							value="#{IndexManagerBean.destino}" style="width: 500px"></p:inputText>
+						<p:graphicImage rendered="#{IndexManagerBean.destinoOk == true}"
+							url="./img/ok.png" />
+					</p:column>
+					<p:column>
+					 <p:dataTable id="log_ID" var="log" emptyMessage="" value="#{IndexManagerBean.listaLog}" 
+					 	scrollable="true"  scrollWidth="510" scrollHeight="200">
+    					<f:facet name="header">Log</f:facet>
+    					<p:column>
+            					<h:outputText value="#{log.logDescricao}" style="font-weight: normal; font-size: x-small"/>
+       					 </p:column>
+        			</p:dataTable>
+
+						<p:progressBar widgetVar="pbAjax" id="barra" ajax="true" style="width:500px" value="#{IndexManagerBean.progress}" labelTemplate="{value}%" styleClass="animated" global="false">
+        				</p:progressBar>
+											
+					</p:column>
+					<p:column >
+						<p:spacer width="95px" height="0px" />
+						<p:commandButton style="width: 135px" update="mainForm"
+							value="Resetar" action="#{IndexManagerBean.resetar}" id="rest"></p:commandButton>
+						<p:spacer width="40px" height="0px" />
+						<p:commandButton value="Gerar Patch" onclick="PF('pbAjax').start();" 
+							disabled="#{IndexManagerBean.gerarPatchOk == true}" widgetVar="gerarPatch"
+							actionListener="#{IndexManagerBean.gerarPatch}"
+							update=":mainForm:growl" id="gerar"></p:commandButton>
+					</p:column>
+				</h:panelGrid>
+			</div>
+
+		</p:panel>
+	</h:form>
+	<script type="text/javascript">
+		function start() {
+     	 window['progress'] = setInterval(function() {
+        var pbClient = PF('pbClient'),
+        oldValue = pbClient.getValue(),
+        newValue = oldValue + 10;
+ 
+        pbClient.setValue(pbClient.getValue() + 10);
+ 
+        if(newValue === 100) {
+            clearInterval(window['progress']);
+        } 					 
+    	}, 1000);
+	} 
+}
+</script>
+</h:body>
+</html>
