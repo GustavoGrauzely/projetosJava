@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 4 packages to &apos;fj21-agenda/src&apos;&#x0D;&#x0A;- Original project: &apos;fj21-jdbc&apos;&#x0D;&#x0A;- Destination element: &apos;fj21-agenda/src&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     fj21-jdbc/src/br.com.caelum.jdbc&#x0D;&#x0A;     fj21-jdbc/src/br.com.caelum.jdbc.teste&#x0D;&#x0A;     fj21-jdbc/src/br.com.caelum.jdbc.model&#x0D;&#x0A;     fj21-jdbc/src/br.com.caelum.jdbc.dao" description="Copy packages" destination="=fj21-agenda/src" element1="/src&lt;br.com.caelum.jdbc" element2="/src&lt;br.com.caelum.jdbc.teste" element3="/src&lt;br.com.caelum.jdbc.model" element4="/src&lt;br.com.caelum.jdbc.dao" flags="589830" fragments="4" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyPackages" stamp="1510861204101" version="1.0"/>
+</session>

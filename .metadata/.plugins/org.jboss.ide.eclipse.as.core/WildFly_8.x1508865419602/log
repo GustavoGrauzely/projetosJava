@@ -131,3 +131,143 @@
 
 !ENTRY org.jboss.ide.eclipse.as.wtp.core 1 16973825 2017-11-07 16:57:01.210
 !MESSAGE Server processes have been terminated.
+!SESSION 
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 0 2017-11-16 16:19:56.843
+!MESSAGE The server "WildFly 8.x" requires a JDK to run properly. The VM used to launch this server is not recognized as a valid JDK. C:\Program Files (x86)\Java\jre1.8.0_144 
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842760 2017-11-16 16:19:59.287
+!MESSAGE Server Starting
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842769 2017-11-16 16:20:23.979
+!MESSAGE Server Startup Succeeded
+
+!ENTRY org.jboss.ide.eclipse.as.wtp.core 1 16973825 2017-11-16 16:22:00.216
+!MESSAGE Server processes have been terminated.
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 0 2017-11-16 16:22:26.820
+!MESSAGE The server "WildFly 8.x" requires a JDK to run properly. The VM used to launch this server is not recognized as a valid JDK. C:\Program Files (x86)\Java\jre1.8.0_144 
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842760 2017-11-16 16:22:27.955
+!MESSAGE Server Starting
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842769 2017-11-16 16:22:33.869
+!MESSAGE Server Startup Succeeded
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 0 2017-11-16 16:22:33.879
+!MESSAGE Module fj21-agenda on WildFly 8.x not yet fully deployed. Waiting...
+
+!ENTRY org.jboss.ide.eclipse.as.wtp.core 1 16973825 2017-11-16 16:45:17.642
+!MESSAGE Server processes have been terminated.
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 0 2017-11-16 16:49:09.643
+!MESSAGE The server "WildFly 8.x" requires a JDK to run properly. The VM used to launch this server is not recognized as a valid JDK. C:\Program Files (x86)\Java\jre1.8.0_144 
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842760 2017-11-16 16:49:10.804
+!MESSAGE Server Starting
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842769 2017-11-16 16:49:18.006
+!MESSAGE Server Startup Succeeded
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 0 2017-11-16 16:49:18.012
+!MESSAGE Module fj21-agenda on WildFly 8.x not yet fully deployed. Waiting...
+
+!ENTRY org.jboss.ide.eclipse.as.wtp.core 1 16973825 2017-11-16 17:36:23.103
+!MESSAGE Server processes have been terminated.
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 0 2017-11-16 17:38:01.729
+!MESSAGE The server "WildFly 8.x" requires a JDK to run properly. The VM used to launch this server is not recognized as a valid JDK. C:\Program Files (x86)\Java\jre1.8.0_144 
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842760 2017-11-16 17:38:03.330
+!MESSAGE Server Starting
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842769 2017-11-16 17:38:09.100
+!MESSAGE Server Startup Succeeded
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 0 2017-11-16 17:38:09.107
+!MESSAGE Module fj21-agenda on WildFly 8.x not yet fully deployed. Waiting...
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 1644298244 2017-11-16 17:42:20.319
+!MESSAGE Incremental publish failed for module fj21-agenda
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:20.319
+!MESSAGE Could not delete C:/Users/g.da.silva.alves/wildfly-8.1.0.Final/standalone/deployments/fj21-agenda.war/WEB-INF/classes/br/com/caelum/jdbc. May be locked by another process.
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 1644298244 2017-11-16 17:42:36.712
+!MESSAGE Incremental publish failed for module fj21-agenda
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\dao\ContatoDao.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\dao\DAOException.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\dao\FuncionarioDao.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:/Users/g.da.silva.alves/wildfly-8.1.0.Final/standalone/deployments/fj21-agenda.war/WEB-INF/classes/br/com/caelum/jdbc/dao. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\model\Contato.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\model\Funcionario.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:/Users/g.da.silva.alves/wildfly-8.1.0.Final/standalone/deployments/fj21-agenda.war/WEB-INF/classes/br/com/caelum/jdbc/model. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\teste\TestaConexao.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:/Users/g.da.silva.alves/wildfly-8.1.0.Final/standalone/deployments/fj21-agenda.war/WEB-INF/classes/br/com/caelum/jdbc/teste. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\ConnectionFactory.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:42:36.712
+!MESSAGE Could not delete C:/Users/g.da.silva.alves/wildfly-8.1.0.Final/standalone/deployments/fj21-agenda.war/WEB-INF/classes/br/com/caelum/jdbc. May be locked by another process.
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 1644298244 2017-11-16 17:43:07.526
+!MESSAGE Incremental publish failed for module fj21-agenda
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.526
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\dao\ContatoDao.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.526
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\dao\DAOException.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.526
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\dao\FuncionarioDao.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.526
+!MESSAGE Could not delete C:/Users/g.da.silva.alves/wildfly-8.1.0.Final/standalone/deployments/fj21-agenda.war/WEB-INF/classes/br/com/caelum/jdbc/dao. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.526
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\model\Contato.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.526
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\model\Funcionario.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.526
+!MESSAGE Could not delete C:/Users/g.da.silva.alves/wildfly-8.1.0.Final/standalone/deployments/fj21-agenda.war/WEB-INF/classes/br/com/caelum/jdbc/model. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.527
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\teste\TestaConexao.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.527
+!MESSAGE Could not delete C:/Users/g.da.silva.alves/wildfly-8.1.0.Final/standalone/deployments/fj21-agenda.war/WEB-INF/classes/br/com/caelum/jdbc/teste. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.527
+!MESSAGE Could not delete C:\Users\g.da.silva.alves\wildfly-8.1.0.Final\standalone\deployments\fj21-agenda.war\WEB-INF\classes\br\com\caelum\jdbc\ConnectionFactory.class. May be locked by another process.
+!SUBENTRY 1 org.jboss.ide.eclipse.as.wtp.core 4 1644298251 2017-11-16 17:43:07.527
+!MESSAGE Could not delete C:/Users/g.da.silva.alves/wildfly-8.1.0.Final/standalone/deployments/fj21-agenda.war/WEB-INF/classes/br/com/caelum/jdbc. May be locked by another process.
+
+!ENTRY org.jboss.ide.eclipse.as.wtp.core 1 16973825 2017-11-16 17:43:11.952
+!MESSAGE Server processes have been terminated.
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 0 2017-11-16 17:43:43.330
+!MESSAGE The server "WildFly 8.x" requires a JDK to run properly. The VM used to launch this server is not recognized as a valid JDK. C:\Program Files (x86)\Java\jre1.8.0_144 
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842760 2017-11-16 17:43:44.500
+!MESSAGE Server Starting
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842769 2017-11-16 17:43:50.604
+!MESSAGE Server Startup Succeeded
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 0 2017-11-16 17:43:50.611
+!MESSAGE Module fj21-agenda on WildFly 8.x not yet fully deployed. Waiting...
+
+!ENTRY org.jboss.ide.eclipse.as.wtp.core 1 16973825 2017-11-16 17:44:20.960
+!MESSAGE Server processes have been terminated.
+
+!ENTRY org.jboss.ide.eclipse.as.core 4 0 2017-11-16 17:45:48.398
+!MESSAGE The server "WildFly 8.x" requires a JDK to run properly. The VM used to launch this server is not recognized as a valid JDK. C:\Program Files (x86)\Java\jre1.8.0_144 
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842760 2017-11-16 17:45:49.597
+!MESSAGE Server Starting
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 16842769 2017-11-16 17:45:55.427
+!MESSAGE Server Startup Succeeded
+
+!ENTRY org.jboss.ide.eclipse.as.core 1 0 2017-11-16 17:45:55.535
+!MESSAGE Module fj21-agenda on WildFly 8.x not yet fully deployed. Waiting...
