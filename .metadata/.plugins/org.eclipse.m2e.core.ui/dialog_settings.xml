@@ -2,10 +2,12 @@
 <section name="Workbench">
 	<section name="MavenProjectWizardArtifactPage">
 		<list key="groupId">
+			<item value="br.com.grauzely"/>
 		</list>
 		<list key="name">
 		</list>
 		<list key="artifactId">
+			<item value="Gerenciador"/>
 		</list>
 		<list key="projectNameTemplate">
 			<item value="[artifactId]"/>
@@ -53,13 +55,10 @@
 	</section>
 	<section name="Maven2ProjectWizardArchifactPage">
 		<list key="package">
-			<item value="br.com.grauzely.WebServiceRest"/>
 		</list>
 		<list key="groupId">
-			<item value="br.com.grauzely"/>
 		</list>
 		<list key="artifactId">
-			<item value="WebServiceRest"/>
 		</list>
 		<list key="projectNameTemplate">
 			<item value="[artifactId]"/>
