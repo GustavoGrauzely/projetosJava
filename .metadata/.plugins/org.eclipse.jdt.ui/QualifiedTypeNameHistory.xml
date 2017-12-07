@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.text.SimpleDateFormat"/>
 <fullyQualifiedTypeName name="java.lang.RuntimeException"/>
 <fullyQualifiedTypeName name="br.com.caelum.jdbc.dao.DAOException"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="org.controlsfx.dialog.Dialogs"/>
 <fullyQualifiedTypeName name="javafx.stage.Stage"/>
 <fullyQualifiedTypeName name="javafx.scene.image.Image"/>
+<fullyQualifiedTypeName name="br.com.grauzely.acc.view.LoginAccController"/>
 </qualifiedTypeNameHistroy>
