@@ -1,9 +1,0 @@
-package br.com.grauzely.model;
-
-import java.io.Serializable;
-
-public class Produtos implements Serializable {
-
-	private static final long serialVersionUID = 1L;
-	
-}

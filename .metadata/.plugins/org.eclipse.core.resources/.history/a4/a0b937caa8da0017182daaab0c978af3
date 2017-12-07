@@ -1,0 +1,150 @@
+package br.com.grauzely.endereco.view;
+
+import br.com.grauzely.endereco.MainApp;
+import br.com.grauzely.endereco.model.Pessoa;
+import br.com.grauzely.util.DataUtil;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+
+public class PessoaOverviewController {
+	@FXML
+	private TableView<Pessoa> tabelaPessoa;
+	@FXML
+	private TableColumn<Pessoa, String> colunaNome;
+	@FXML
+	private TableColumn<Pessoa, String> colunaSobrenome;
+
+	@FXML
+	private Label nomeLabel;
+	@FXML
+	private Label sobrenomeLabel;
+	@FXML
+	private Label logradouroLabel;
+	@FXML
+	private Label cepLabel;
+	@FXML
+	private Label cidadeLabel;
+	@FXML
+	private Label nascimentoLabel;
+
+	// Reference to the main application.
+	private MainApp mainApp;
+
+	/**
+	 * O construtor. O construtor é chamado antes do método inicialize().
+	 */
+	public PessoaOverviewController() {
+	}
+
+	/**
+	 * Inicializa a classe controller. Este método é chamado automaticamente
+	 * após o arquivo fxml ter sido carregado.
+	 */
+	@FXML
+	private void initialize() {
+		// Inicializa a tabela de pessoa com duas colunas.
+		colunaNome.setCellValueFactory(cellData -> cellData.getValue()
+				.nomeProperty());
+		colunaSobrenome.setCellValueFactory(cellData -> cellData.getValue()
+				.sobrenomeProperty());
+		
+		// Limpa os detalhes da pessoa.
+	    showPersonDetails(null);
+
+	    // Detecta mudanças de seleção e mostra os detalhes da pessoa quando houver mudança.
+	    tabelaPessoa.getSelectionModel().selectedItemProperty().addListener(
+	            (observable, oldValue, newValue) -> showPersonDetails(newValue));
+	}
+
+	/**
+	 * É chamado pela aplicação principal para dar uma referência de volta a si
+	 * mesmo.
+	 * 
+	 * @param mainApp
+	 */
+	public void setMainApp(MainApp mainApp) {
+		this.mainApp = mainApp;
+
+		// Adiciona os dados da observable list na tabela
+		tabelaPessoa.setItems(mainApp.getListaPessoas());
+	}
+	
+	private void showPersonDetails(Pessoa pessoa) {
+	    if (pessoa != null) {
+	        // Preenche as labels com informações do objeto person.
+	        nomeLabel.setText(pessoa.getNome());
+	        sobrenomeLabel.setText(pessoa.getSobrenome());
+	        logradouroLabel.setText(pessoa.getLogradouro());
+	        cepLabel.setText(Integer.toString(pessoa.getCep()));
+	        cidadeLabel.setText(pessoa.getCidade());
+	        nascimentoLabel.setText(DataUtil.format(pessoa.getNascimento()));
+	    } else {
+	        // Person é null, remove todo o texto.
+	    	nomeLabel.setText("");
+	    	sobrenomeLabel.setText("");
+	    	logradouroLabel.setText("");
+	    	cepLabel.setText("");
+	    	cidadeLabel.setText("");
+	        nascimentoLabel.setText("");
+	    }
+	}
+	
+	/**
+	 * Chamado quando o usuário clica no botão delete.
+	 */
+	@FXML
+	private void handleDeletePessoa() {
+	    int selectedIndex = tabelaPessoa.getSelectionModel().getSelectedIndex();
+	    if (selectedIndex >= 0) {
+	    	tabelaPessoa.getItems().remove(selectedIndex);
+	    } else {
+	        // Nada selecionado.
+	      Alert alert = new Alert(AlertType.WARNING);
+	            alert.setTitle("Nenhuma seleção");
+	            alert.setHeaderText("Nenhuma Pessoa Selecionada");
+	            alert.setContentText("Por favor, selecione uma pessoa na tabela.");
+	            alert.showAndWait();
+	    }
+	}
+	
+	/**
+	 * Chamado quando o usuário clica no botão novo. Abre uma janela para editar
+	 * detalhes da nova pessoa.
+	 */
+	@FXML
+	private void handleNewPerson() {
+	    Pessoa tempPessoa = new Pessoa();
+	    boolean okClicked = mainApp.showPersonEditDialog(tempPessoa);
+	    if (okClicked) {
+	        mainApp.getListaPessoas().add(tempPessoa);
+	    }
+	}
+
+	/**
+	 * Chamado quando o usuário clica no botão edit. Abre a janela para editar
+	 * detalhes da pessoa selecionada.
+	 */
+	@FXML
+	private void handleEditPerson() {
+	    Person selectedPerson = personTable.getSelectionModel().getSelectedItem();
+	    if (selectedPerson != null) {
+	        boolean okClicked = mainApp.showPersonEditDialog(selectedPerson);
+	        if (okClicked) {
+	            showPersonDetails(selectedPerson);
+	        }
+
+	    } else {
+	        // Nada seleciondo.
+	        Alert alert = new Alert(AlertType.WARNING);
+	            alert.setTitle("Nenhuma seleção");
+	            alert.setHeaderText("Nenhuma Pessoa Selecionada");
+	            alert.setContentText("Por favor, selecione uma pessoa na tabela.");
+	            alert.showAndWait();
+	    }
+	}
+	
+}

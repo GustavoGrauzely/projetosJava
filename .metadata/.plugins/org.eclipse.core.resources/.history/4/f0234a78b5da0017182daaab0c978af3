@@ -1,0 +1,25 @@
+package br.com.grauzely.endereco.model;
+
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+/**
+ * Classe auxiliar para envolver uma lista de pessoas. Esta é usada para salvar a
+ * lista de pessoas em XML.
+ */
+@XmlRootElement(name = "pessoas")
+public class PessoaListWrapper {
+
+	private List<Pessoa> pessoas;
+
+    @XmlElement(name = "pessoa")
+    public List<Pessoa> getPessoa() {
+        return pessoas;
+    }
+
+    public void setPessoa(List<Pessoa> pessoas) {
+        this.pessoas = pessoas;
+    }
+	
+}

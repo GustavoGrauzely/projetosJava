@@ -1,0 +1,5 @@
+package br.com.grauzely.endereco.util;
+
+public class LocalDateAdapter {
+
+}

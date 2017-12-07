@@ -1,0 +1,34 @@
+package br.com.grauzely.endereco.view;
+
+import java.io.File;
+
+import javafx.fxml.FXML;
+import javafx.stage.FileChooser;
+
+import org.controlsfx.dialog.Dialogs;
+
+import br.com.grauzely.endereco.MainApp;
+
+public class RootLayoutController {
+	// Referência à aplicação principal
+    private MainApp mainApp;
+    
+    /**
+     * É chamado pela aplicação principal para referenciar a si mesma.
+     * 
+     * @param mainApp
+     */
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
+    }
+    /**
+     * Cria uma agenda vazia.
+     */
+    @FXML
+    private void handleNew() {
+        mainApp.getListaPessoas().clear();
+        mainApp.setPessoaFilePath(null);
+    }
+
+    
+}
