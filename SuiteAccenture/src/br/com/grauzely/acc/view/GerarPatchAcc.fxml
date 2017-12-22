@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.grauzely.acc.view.GerarPatchAccController">
+   <children>
+      <Pane layoutX="-6.0" prefHeight="403.0" prefWidth="610.0">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="205.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../../PatchExpress/WebContent/img/acc.png" />
+               </image>
+            </ImageView>
+            <HBox layoutX="105.0" layoutY="116.0">
+               <children>
+                  <Label layoutX="69.0" layoutY="141.0" text="Origem">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="origem" layoutX="125.0" layoutY="138.0" prefHeight="25.0" prefWidth="303.0" />
+                  <Button fx:id="btnOrigem" alignment="CENTER" layoutX="428.0" layoutY="138.0" mnemonicParsing="false" onAction="#buscarOrigem" prefHeight="25.0" prefWidth="27.0">
+                     <graphic>
+                        <ImageView fitHeight="17.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../../../Downloads/lupa.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox layoutX="105.0" layoutY="156.0">
+               <children>
+                  <Label layoutX="68.0" layoutY="205.0" text="Destino">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="destino" layoutX="125.0" layoutY="202.0" prefHeight="25.0" prefWidth="303.0" />
+                  <Button fx:id="btnDestino" alignment="CENTER" layoutX="428.0" layoutY="202.0" mnemonicParsing="false" onAction="#buscarDestino" prefHeight="25.0" prefWidth="27.0">
+                     <graphic>
+                        <ImageView fitHeight="17.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../../../Downloads/lupa.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+            <ListView fx:id="listaViewLogs" layoutX="105.0" layoutY="195.0" prefHeight="129.0" prefWidth="387.0" />
+            <ProgressBar fx:id="barra" layoutX="105.0" layoutY="324.0" prefHeight="18.0" prefWidth="387.0" progress="0.0" />
+            <Button fx:id="btnGerarPatch" layoutX="183.0" layoutY="359.0" mnemonicParsing="false" onAction="#gerarPatch" text="Gerar Patch">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnResetar" layoutX="318.0" layoutY="359.0" mnemonicParsing="false" onAction="#resetar" prefHeight="30.0" prefWidth="97.0" text="Resetar">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

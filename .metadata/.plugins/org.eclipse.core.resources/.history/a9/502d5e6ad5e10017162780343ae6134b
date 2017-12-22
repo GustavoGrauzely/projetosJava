@@ -1,0 +1,19 @@
+package br.com.grauzely.acc.util;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+ 
+import javax.swing.JFrame;
+ 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.swing.JRViewer;
+
+public class gerarRelatorio extends JFrame{
+
+}

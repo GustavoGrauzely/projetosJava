@@ -1,0 +1,62 @@
+package br.com.grauzely.acc.controller;
+
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.ResourceBundle;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.DatePicker;
+import javafx.stage.Stage;
+import br.com.grauzely.acc.MainApp;
+import br.com.grauzely.acc.model.Log;
+import br.com.grauzely.acc.model.ServiceRequests;
+
+
+public class GerarPatchAccController implements Initializable {
+	
+	@FXML
+	private TextField origem;
+	@FXML
+	private TextField destino;
+	@FXML
+	private Button btnOrigem;
+	@FXML
+	private Button btnDestino;
+	@FXML
+	private ListView<Log> listaLogs;
+	@FXML
+	private ProgressBar barra;
+	
+	
+	private MainApp mainApp;
+	private Stage dialogOraclePatchStage;
+		
+	public void setMainApp(MainApp mainApp) {
+		this.mainApp = mainApp;
+	}
+	
+	public void setDialogOraclePatchStage(Stage dialogOraclePatchStage) {
+		this.dialogOraclePatchStage = dialogOraclePatchStage;
+	}
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	
+}

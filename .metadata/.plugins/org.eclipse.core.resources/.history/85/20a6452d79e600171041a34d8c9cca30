@@ -1,0 +1,17 @@
+package br.com.grauzely.acc.model;
+
+import javafx.collections.ObservableList;
+
+public class Log {
+
+	private ObservableList<String> logDescricao;
+	
+	public ObservableList<String> getLogDescricao() {
+		return logDescricao;
+	}
+
+	public void setLogDescricao(ObservableList<String> logDescricao) {
+		this.logDescricao = logDescricao;
+	}
+	
+}

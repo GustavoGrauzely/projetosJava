@@ -1,0 +1,189 @@
+package br.com.grauzely.acc.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import br.com.grauzely.acc.model.ServiceRequests;
+import br.com.grauzely.acc.service.ServiceRequestsService;
+import br.com.grauzely.acc.util.ConnectionUtil;
+
+public class ServiceRequestsDao implements ServiceRequestsService {
+		
+	Connection connection = null;
+	
+	public ServiceRequestsDao(){
+		
+	}
+	
+	// comandos
+		final String INSERIR = "INSERT INTO service_requests(id_geracao, data_geracao_sr, demanda_sr, numero_sr, status_sr, usuario_sr, data_ult_mov_sr, desc_ult_mov_sr) VALUES(?, STR_TO_DATE(?, '%d/%m/%Y'), ?, ?, ?, ?, STR_TO_DATE(?, '%d/%m/%Y'), ? )";
+		final String ATUALIZAR = "UPDATE service_requests SET id_geracao = ?, data_geracao_sr =  STR_TO_DATE(?, '%d/%m/%Y'), demanda_sr = ?, numero_sr = ?, status_sr = ?, usuario_sr = ?, data_ult_mov_sr =  STR_TO_DATE(?, '%d/%m/%Y'), desc_ult_mov_sr = ? WHERE id_sr = ?";
+		final String BUSCAR = "SELECT id_sr, id_geracao, DATE_FORMAT(data_geracao_sr, '%d/%m/%Y'), demanda_sr, numero_sr, status_sr, usuario_sr, DATE_FORMAT(data_ult_mov_sr, '%d/%m/%Y'), desc_ult_mov_sr  FROM service_requests WHERE id_sr = ?";
+		final String BUSCAR_TODOS = "SELECT id_sr, id_geracao, DATE_FORMAT(data_geracao_sr, '%d/%m/%Y'), demanda_sr, numero_sr, status_sr, usuario_sr, DATE_FORMAT(data_ult_mov_sr, '%d/%m/%Y'), desc_ult_mov_sr FROM service_requests";
+		final String APAGAR = "DELETE FROM service_requests WHERE id_sr = ?";
+		final String BUSCAR_GERACAO = "select MAX(id_geracao) FROM suite_accenture.service_requests;";
+		
+		// tratamento de data
+
+		final String FORMATO_DATA = "dd/MM/yyyy";
+		final SimpleDateFormat FORMATADOR = new SimpleDateFormat(FORMATO_DATA);
+
+		@Override
+		public boolean salvar(ServiceRequests sr) {
+			try {
+				connection = ConnectionUtil.connectdb();
+				PreparedStatement salvar = connection.prepareStatement(INSERIR);
+				String dateStrGeracao = FORMATADOR.format(sr.getData_geracao());
+				salvar.setInt(1, sr.getId_geracao());
+				salvar.setString(2, dateStrGeracao);
+				salvar.setString(3, sr.getDemanda());
+				salvar.setString(4, sr.getNumeroSR());
+				salvar.setString(5, sr.getStatus());
+				salvar.setString(6, sr.getUsuario());
+				salvar.setString(7, sr.getData());
+				salvar.setString(8, sr.getDescricao());
+				salvar.execute();
+				salvar.close();
+				connection.close();
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("ERROR SALVANDO Service Requests");
+				System.exit(0);
+				return false;
+			} 
+		}
+
+		@Override
+		public List<ServiceRequests> buscarTodas() {
+			List<ServiceRequests> SRs = new ArrayList<>();
+			try {
+				connection = ConnectionUtil.connectdb();
+				PreparedStatement buscarTodos = connection.prepareStatement(BUSCAR_TODOS);
+				ResultSet resultadoBusca = buscarTodos.executeQuery();
+				while (resultadoBusca.next()) {
+					ServiceRequests sr = new ServiceRequests();
+					sr.setId_sr(Integer.valueOf(resultadoBusca.getString("id_sr")));
+					sr.setId_geracao(Integer.valueOf(resultadoBusca.getString("id_geracao")));
+					sr.setData_geracao(resultadoBusca.getDate("data_geracao_sr"));
+					sr.setDemanda(resultadoBusca.getString("demanda_sr"));
+					sr.setNumeroSR(resultadoBusca.getString("numero_sr"));
+					sr.setStatus(resultadoBusca.getString("status_sr"));
+					sr.setUsuario(resultadoBusca.getString("usuario_sr"));
+					sr.setData(resultadoBusca.getDate("data_ult_mov_sr").toString());
+					sr.setDescricao(resultadoBusca.getString("desc_ult_mov_sr"));
+					SRs.add(sr);
+				}
+				resultadoBusca.close();
+				buscarTodos.close();
+				connection.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("ERROR BUSCANDO TODAS AS SRs.");
+				System.exit(0);
+			} 
+			return SRs;
+		}
+		
+		
+		public int buscarUltimaGeracao() {
+			int id_geracao = 0;
+			try {
+				connection = ConnectionUtil.connectdb();
+				PreparedStatement buscarGeracao = connection.prepareStatement(BUSCAR_GERACAO);
+				ResultSet resultadoBusca = buscarGeracao.executeQuery();
+				while (resultadoBusca.next()) {
+					if (resultadoBusca.getString("MAX(id_geracao)") != null){
+						id_geracao = (Integer.valueOf(resultadoBusca.getString("MAX(id_geracao)"))) + 1;
+					}else{
+						id_geracao = 1;
+					}
+				}
+				resultadoBusca.close();
+				resultadoBusca.close();
+				connection.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("ERROR BUSCANDO PROXIMA GERACAO ID.");
+				System.exit(0);
+			} 
+			return id_geracao;
+		}
+
+		@Override
+		public ServiceRequests buscarPorId(int id) {
+			ServiceRequests sr = null;
+			try {
+				PreparedStatement buscar = connection.prepareStatement(BUSCAR);
+				buscar.setInt(1, id);
+				ResultSet resultadoBusca = buscar.executeQuery();
+				resultadoBusca.next();
+				while (resultadoBusca.next()) {
+				    sr.setId_sr(Integer.valueOf(resultadoBusca.getString("id_sr")));
+					sr.setId_geracao(Integer.valueOf(resultadoBusca.getString("id_geracao")));
+					sr.setData_geracao(resultadoBusca.getDate("data_geracao_sr"));
+					sr.setDemanda(resultadoBusca.getString("demanda_sr"));
+					sr.setNumeroSR(resultadoBusca.getString("numero_sr"));
+					sr.setStatus(resultadoBusca.getString("status_sr"));
+					sr.setUsuario(resultadoBusca.getString("usuario_sr"));
+					sr.setData(resultadoBusca.getDate("data_ult_mov_sr").toString());
+					sr.setDescricao(resultadoBusca.getString("desc_ult_mov_sr"));
+				}
+				resultadoBusca.close();
+				buscar.close();
+				connection.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("ERROR BUSCANDO CONTA COM ID " + id);
+				System.exit(0);
+			} 
+			return sr;
+		}
+
+		@Override
+		public void apagar(int id) {
+			try {
+				PreparedStatement apagar = connection.prepareStatement(APAGAR);
+				apagar.setInt(1, id);
+				apagar.executeUpdate();
+				apagar.close();
+				connection.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("ERROR APAGANDO CONTA COM ID " + id);
+				System.exit(0);
+			} 
+		}
+
+		@Override
+		public void atualizar(ServiceRequests sr) {
+			try {
+				PreparedStatement atualizar = connection.prepareStatement(ATUALIZAR);
+				String dateStrGeracao = FORMATADOR.format(sr.getData_geracao());
+				atualizar.setInt(1, sr.getId_geracao());
+				atualizar.setString(2, dateStrGeracao);
+				atualizar.setString(3, sr.getDemanda());
+				atualizar.setString(4, sr.getNumeroSR());
+				atualizar.setString(5, sr.getStatus());
+				atualizar.setString(6, sr.getUsuario());
+				atualizar.setString(7, sr.getData());
+				atualizar.setString(8, sr.getDescricao());
+				atualizar.executeUpdate();
+				atualizar.close();
+				connection.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("ERROR ATUALIZANDO CONTA COM ID " + sr.getId_sr());
+				System.exit(0);
+			} 
+
+		}
+	
+	
+}

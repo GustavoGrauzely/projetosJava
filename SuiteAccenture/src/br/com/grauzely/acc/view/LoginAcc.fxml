@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.grauzely.acc.view.LoginAccController">
+<AnchorPane prefHeight="320.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.grauzely.acc.controller.LoginAccController">
    <children>
-      <Pane prefHeight="300.0" prefWidth="300.0">
+      <Pane prefHeight="320.0" prefWidth="300.0">
          <children>
             <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="53.0" layoutY="-27.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -23,24 +23,24 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField layoutX="93.0" layoutY="141.0" prefHeight="25.0" prefWidth="174.0" />
+            <TextField fx:id="apelido" layoutX="93.0" layoutY="141.0" prefHeight="25.0" prefWidth="174.0" />
             <Label layoutX="33.0" layoutY="181.0" text="Senha">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField layoutX="93.0" layoutY="179.0" prefHeight="25.0" prefWidth="174.0" />
-            <Button layoutX="93.0" layoutY="225.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="83.0" text="Entrar">
+            <PasswordField fx:id="senha" layoutX="93.0" layoutY="179.0" prefHeight="25.0" prefWidth="174.0" />
+            <Button layoutX="96.0" layoutY="241.0" mnemonicParsing="false" onAction="#entrarLogin" prefHeight="30.0" prefWidth="83.0" text="Entrar">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button layoutX="183.0" layoutY="225.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="83.0" text="Sair">
+            <Button layoutX="186.0" layoutY="241.0" mnemonicParsing="false" onAction="#sair" prefHeight="30.0" prefWidth="83.0" text="Sair">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Label layoutX="89.0" layoutY="271.0" text="Created by Gustavo Grauzely">
+            <Label layoutX="92.0" layoutY="287.0" text="Created by Gustavo Grauzely">
                <font>
                   <Font size="10.0" />
                </font>
@@ -50,6 +50,7 @@
                   <Font name="Arial Bold" size="18.0" />
                </font>
             </Label>
+            <Hyperlink layoutX="138.0" layoutY="211.0" onAction="#cadastroLogin" text="Cadastre-se..." />
          </children>
       </Pane>
    </children>

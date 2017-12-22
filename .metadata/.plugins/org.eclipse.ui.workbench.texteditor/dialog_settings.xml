@@ -2,20 +2,20 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="AwesomeDude" key="selection"/>
+		<item value="listalog" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="AwesomeDude"/>
-			<item value="fx:deploy"/>
-			<item value="com.sun.javafx.Utils"/>
-			<item value="okClicked"/>
-			<item value="verificarXml"/>
-			<item value="copiarArquivosExt"/>
-			<item value="verificar"/>
-			<item value="novoLerArquivos"/>
+			<item value="listalog"/>
+			<item value="infoBox"/>
+			<item value="listaSRs"/>
+			<item value="tabelaSR"/>
+			<item value="observable"/>
+			<item value="false"/>
+			<item value="DatePicker"/>
+			<item value="adicionar"/>
 		</list>
 		<list key="replacehistory">
 		</list>
@@ -23,8 +23,8 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="257" key="DIALOG_WIDTH"/>
 		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
-		<item value="337" key="DIALOG_HEIGHT"/>
-		<item value="854" key="DIALOG_X_ORIGIN"/>
-		<item value="157" key="DIALOG_Y_ORIGIN"/>
+		<item value="381" key="DIALOG_HEIGHT"/>
+		<item value="997" key="DIALOG_X_ORIGIN"/>
+		<item value="487" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

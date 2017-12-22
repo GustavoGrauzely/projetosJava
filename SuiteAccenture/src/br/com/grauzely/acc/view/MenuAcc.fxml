@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.grauzely.acc.controller.MenuAccController">
+   <children>
+      <Pane layoutX="-4.0" layoutY="-3.0" prefHeight="407.0" prefWidth="608.0">
+         <children>
+            <Button alignment="CENTER" layoutX="72.0" layoutY="172.0" mnemonicParsing="false" onAction="#oracleServiceRequest" prefHeight="108.0" prefWidth="200.0" text="Oracle Service Requests" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="98.0" fitWidth="117.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../../../../Pictures/support.png" />
+                     </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="271.0" layoutY="361.0" mnemonicParsing="false" onAction="#deslogar" text="Deslogar">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Button>
+            <Button layoutX="330.0" layoutY="172.0" mnemonicParsing="false" onAction="#oracleGerarPatch" prefHeight="108.0" prefWidth="200.0" text="Patch Created" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="95.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../../../../Pictures/Oracle.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </Pane>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="200.0" layoutY="-19.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../../../../../Pictures/Accenture-red-arrow-logo-830x623.png" />
+         </image>
+      </ImageView>
+      <Label alignment="CENTER" layoutY="102.0" prefHeight="21.0" prefWidth="601.0" text="Suite Optimizer">
+         <font>
+            <Font name="Arial Bold" size="18.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

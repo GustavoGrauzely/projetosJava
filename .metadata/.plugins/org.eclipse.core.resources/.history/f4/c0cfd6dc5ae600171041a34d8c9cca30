@@ -1,0 +1,109 @@
+package br.com.grauzely.acc.controller;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import br.com.grauzely.acc.MainApp;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class MenuAccController implements Initializable {
+	
+	private MainApp mainApp;
+	private AnchorPane oracleSRAcc;
+	private Stage oracleSrStage = new Stage();
+	private AnchorPane oraclePatchAcc;
+	private Stage oraclePatchStage = new Stage();
+	
+	
+
+	@FXML
+	public void oracleServiceRequest() {
+    	try {
+    		
+    		 // Carrega o arquivo fxml e cria um novo stage para a janela popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/OracleSupportAcc.fxml"));
+            oracleSRAcc = (AnchorPane) loader.load();
+
+            // Cria o palco oracleSrStage.
+            oracleSrStage.setTitle("Cadastrar Service Requests");
+            oracleSrStage.getIcons().add(new Image("file:resources/imagens/setup.png"));
+            oracleSrStage.initModality(Modality.WINDOW_MODAL);
+            oracleSrStage.initOwner(mainApp.menuStage);
+            Scene scene = new Scene(oracleSRAcc);
+            oracleSrStage.setScene(scene);
+
+            // Define a oracleSrStage no controller.
+            OracleSupportAccController controller = new OracleSupportAccController();
+            controller.setDialogOracleSrStage(oracleSrStage);
+  
+            // Mostra a janela e espera até o usuário fechar.
+            oracleSrStage.showAndWait();
+    		
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	@FXML
+	public void oracleGerarPatch() {
+    	try {
+    		
+    		 // Carrega o arquivo fxml e cria um novo stage para a janela popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/GerarPatchAcc.fxml"));
+            oraclePatchAcc = (AnchorPane) loader.load();
+
+            // Cria o palco oracleSrStage.
+            oraclePatchStage.setTitle("Gerar patch");
+            oraclePatchStage.getIcons().add(new Image("file:resources/imagens/setup.png"));
+            oraclePatchStage.initModality(Modality.WINDOW_MODAL);
+            oraclePatchStage.initOwner(mainApp.menuStage);
+            Scene scene = new Scene(oraclePatchAcc);
+            oraclePatchStage.setScene(scene);
+
+            // Define a oracleSrStage no controller.
+            GerarPatchAccController controller = new GerarPatchAccController();
+            controller.setDialogOraclePatchStage(oraclePatchStage);
+  
+            // Mostra a janela e espera até o usuário fechar.
+            oraclePatchStage.showAndWait();
+    		
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	
+	public void deslogar(){
+		mainApp.menuStage.close();
+		mainApp.telaLogin();
+	}
+	
+	
+	
+	/**
+	 * É chamado pela aplicação principal para referenciar a si mesma.
+	 * 
+	 * @param mainApp
+	 */
+	public void setMainApp(MainApp mainApp) {
+		this.mainApp = mainApp;
+	}
+
+
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}

@@ -1,0 +1,271 @@
+package br.com.grauzely.acc.view;
+
+import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.ResourceBundle;
+
+import javafx.beans.InvalidationListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+import br.com.grauzely.acc.MainApp;
+import br.com.grauzely.acc.dao.ServiceRequestsDao;
+import br.com.grauzely.acc.dao.UsuarioDao;
+import br.com.grauzely.acc.model.ServiceRequests;
+import br.com.grauzely.acc.service.ServiceRequestsService;
+import br.com.grauzely.acc.util.DateUtil;
+
+public class OracleSupportAccController implements Initializable {
+
+	@FXML
+	private TableView<ServiceRequests> tabelaSR;
+	@FXML
+	private TableColumn<ServiceRequests, String> colunaDemanda;
+	@FXML
+	private TableColumn<ServiceRequests, String> colunaNumeroSR;
+	@FXML
+	private TableColumn<ServiceRequests, String> colunaStatus;
+	@FXML
+	private TableColumn<ServiceRequests, String> colunaUsuario;
+	@FXML
+	private TableColumn<ServiceRequests, String> colunaDescricao;
+	@FXML
+	private TableColumn<ServiceRequests, String> colunaData;
+
+	@FXML
+	private TextField demanda;
+	@FXML
+	private TextField numeroSR;
+	@FXML
+	private ComboBox<String> status;
+	@FXML
+	private ComboBox<String> usuarios;
+	@FXML
+	private TextArea descricao;
+	@FXML
+	private DatePicker data;
+	@FXML
+	private Button adicionarOk;
+	@FXML
+	private Button editarOK;
+
+	private ObservableList<ServiceRequests> listaSRs = FXCollections
+			.observableArrayList();
+
+	private MainApp mainApp;
+	private ServiceRequestsService service;
+	private ServiceRequestsDao serviceRequestsDao = new ServiceRequestsDao();
+	private Stage dialogOracleSrStage;
+	
+	public void setDialogOracleSrStage(Stage dialogOracleSrStage) {
+		this.dialogOracleSrStage = dialogOracleSrStage;
+	}
+
+	public void setMainApp(MainApp mainApp) {
+		this.mainApp = mainApp;
+	}
+
+	final String FORMATO_DATA = "dd/MM/yyyy";
+	final SimpleDateFormat FORMATADOR = new SimpleDateFormat(FORMATO_DATA);
+
+	public void adicionar() {
+		ServiceRequests sr = new ServiceRequests();
+		sr.setDemanda(demanda.getText());
+		sr.setNumeroSR(numeroSR.getText());
+		sr.setStatus(status.getValue());
+		sr.setUsuario(usuarios.getValue());
+		sr.setDescricao(descricao.getText());
+		sr.setData(FORMATADOR.format(DateUtil.asDate(data.getValue())));
+		listaSRs.add(sr);
+		tabelaSR.setItems(listaSRs);
+		demanda.setText("");
+		numeroSR.setText("");
+		status.getSelectionModel().select("Work in Progress");
+		usuarios.getSelectionModel().select("Gustavo Grauzely");
+		descricao.setText("");
+		data.setValue(null);
+	}
+	
+	public void editar(){
+		int selectedIndex = tabelaSR.getSelectionModel().getSelectedIndex();
+		if (selectedIndex >= 0) {
+			tabelaSR.getItems().get(selectedIndex).setDemanda(demanda.getText());
+			tabelaSR.getItems().get(selectedIndex).setNumeroSR(numeroSR.getText());
+			tabelaSR.getItems().get(selectedIndex).setStatus(status.getValue());
+			tabelaSR.getItems().get(selectedIndex).setUsuario(usuarios.getValue());
+			tabelaSR.getItems().get(selectedIndex).setDescricao(descricao.getText());
+			tabelaSR.getItems().get(selectedIndex).setData(FORMATADOR.format(DateUtil.asDate(data.getValue())));
+			demanda.setText("");
+			numeroSR.setText("");
+			status.getSelectionModel().select("Work in Progress");
+			usuarios.getSelectionModel().select("Gustavo Grauzely");
+			descricao.setText("");
+			data.setValue(null);
+			editarOK.setVisible(false);
+			adicionarOk.setVisible(true);
+		} 
+	}
+	
+	
+
+	public void resetar() {
+		tabelaSR.setItems(null);
+		demanda.setText("");
+		numeroSR.setText("");
+		status.getSelectionModel().select("Work in Progress");
+		usuarios.getSelectionModel().select("Gustavo Grauzely");
+		descricao.setText("");
+		data.setValue(null);
+	}
+
+	public void gerarRelatorio() {
+		int id_gerar = serviceRequestsDao.buscarUltimaGeracao();
+		try {
+			serviceRequestsDao = new ServiceRequestsDao();
+			for (ServiceRequests sr : listaSRs) {
+				sr.setId_geracao(id_gerar);
+				sr.setData_geracao(new Date());
+				serviceRequestsDao.salvar(sr);
+			}
+			infoBox("SRs gravadas e seu relatorio vai ser gerado!", "Sucesso!",
+					null);
+		} catch (Exception e) {
+			infoBox("Aconteceu alguma erro na geração!", "Error!", null);
+		}
+	}
+
+	public static void infoBox(String infoMessage, String titleBar,
+			String headerMessage) {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle(titleBar);
+		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image("file:resources/imagens/setup.png"));
+		alert.setHeaderText(headerMessage);
+		alert.setContentText(infoMessage);
+		alert.showAndWait();
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		service = ServiceRequestsService.getNewInstance();
+		statusComboBox();
+		usuarioComboBox();
+		inicializarTabela();
+		adicionarOk.setVisible(true);
+		editarOK.setVisible(false);
+		// Limpa os detalhes da pessoa.
+		mostarSRDetalhes(null);
+
+		// Detecta mudanças de seleção e mostra os detalhes da pessoa quando
+		// houver mudança.
+		tabelaSR.getSelectionModel()
+				.selectedItemProperty()
+				.addListener(
+						(observable, oldValue, newValue) -> mostarSRDetalhes(newValue));
+	}
+
+	public void statusComboBox() {
+		status.getItems().removeAll(status.getItems());
+		status.getItems().addAll("Work in Progress", "Customer Working",
+				"Review Update ", "Development Working",
+				"Awaiting Internal Response", "Solution Offered",
+				"Close Initiated", "Close Requested", "Closed", "Auto-Close",
+				"Review Defect", "Review Task", "Resolved With Solution",
+				"Resolved With Workaround", "Customer Abandoned",
+				"No Fault Found", "Enhancement Request", "Duplicate",
+				"Not Entitled", "Defect Pending");
+		status.getSelectionModel().select("Work in Progress");
+	}
+
+	public void usuarioComboBox() {
+		usuarios.getItems().removeAll(usuarios.getItems());
+		usuarios.getItems().addAll("Gustavo Grauzely", "Fábio Souza",
+				"Edson Barbosa", "Paulo Reis", "Fabricio Souza", "Saulo Reis",
+				"Alesson Santos");
+		usuarios.getSelectionModel().select("Gustavo Grauzely");
+	}
+
+	public void inicializarTabela() {
+		colunaDemanda.setCellValueFactory(cellData -> cellData.getValue()
+				.demandaProperty());
+		colunaNumeroSR.setCellValueFactory(cellData -> cellData.getValue()
+				.numeroSRProperty());
+		colunaStatus.setCellValueFactory(cellData -> cellData.getValue()
+				.statusProperty());
+		colunaUsuario.setCellValueFactory(cellData -> cellData.getValue()
+				.usuarioProperty());
+		colunaDescricao.setCellValueFactory(cellData -> cellData.getValue()
+				.descricaoProperty());
+		colunaData.setCellValueFactory(cellData -> cellData.getValue()
+				.dataProperty());
+
+	}
+
+	private void mostarSRDetalhes(ServiceRequests sr) {
+		if (sr != null) {
+			// Preenche as labels com informações do objeto person.
+			demanda.setText(sr.getDemanda());
+			numeroSR.setText(sr.getNumeroSR());
+			status.getSelectionModel().select(sr.getStatus());
+			usuarios.getSelectionModel().select(sr.getUsuario());
+			descricao.setText(sr.getDescricao());
+			Date date = null;
+			try {
+				date = FORMATADOR.parse(sr.getData());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			data.setValue(DateUtil.asLocalDate(date));
+			editarOK.setVisible(true);
+			adicionarOk.setVisible(false);
+		} else {
+			// SR é null, remove todo o texto.
+			demanda.setText("");
+			numeroSR.setText("");
+			status.getSelectionModel().select("Work in Progress");
+			usuarios.getSelectionModel().select("Gustavo Grauzely");
+			descricao.setText("");
+			data.setValue(null);
+		}
+	}
+
+	@FXML
+	private void deletarSR() {
+		int selectedIndex = tabelaSR.getSelectionModel().getSelectedIndex();
+		if (selectedIndex >= 0) {
+			tabelaSR.getItems().remove(selectedIndex);
+			editarOK.setVisible(false);
+			adicionarOk.setVisible(true);
+		} else {
+			// Nada selecionado.
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Nenhuma seleção");
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image("file:resources/imagens/book.png"));
+			alert.setHeaderText("Nenhuma SR foi Selecionada");
+			alert.setContentText("Por favor, selecione uma SR na tabela.");
+			alert.showAndWait();
+		}
+	}
+
+}
